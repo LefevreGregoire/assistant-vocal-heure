@@ -22,34 +22,55 @@ class VocalTime
         $heure = (int) $time->format('G');
         $minute = (int) $time->format('i');
 
-        // Bascule sur l'heure suivante si on a dépassé la demi-heure
-        if ($minute > 30) {
+        // On cherche le multiple de 5 le plus proche
+        $minuteArrondie = (int) round($minute / 5) * 5;
+        $ecart = abs($minute - $minuteArrondie);
+
+        // Si l'arrondi nous fait basculer à l'heure pile suivante (ex: 58 -> 60)
+        if ($minuteArrondie === 60) {
+            $minuteArrondie = 0;
+            $heure = ($heure + 1) % 24;
+        } elseif ($minuteArrondie > 30) {
+            // Si on dépasse la demi-heure, on prépare le "moins le quart", etc.
             $heure = ($heure + 1) % 24;
         }
 
+        // 1. Construction des minutes
         $strMinute = '';
-        if ($minute > 0 && isset(self::$minutesTexte[$minute])) {
-            $strMinute = ' ' . self::$minutesTexte[$minute];
+        if ($minuteArrondie > 0 && isset(self::$minutesTexte[$minuteArrondie])) {
+            $strMinute = ' ' . self::$minutesTexte[$minuteArrondie];
         }
 
+        // 2. Construction de la base (Heure + Période)
+        $baseTexte = "";
         if ($heure === 12) {
-            return "midi{$strMinute}";
+            $baseTexte = "midi{$strMinute}";
+        } elseif ($heure === 0) {
+            $baseTexte = "minuit{$strMinute}";
+        } else {
+            $suffixe = "du matin";
+            $heureAffichee = $heure;
+
+            if ($heure > 12) {
+                $heureAffichee = $heure - 12;
+                $suffixe = "de l'après-midi";
+            }
+
+            $texteHeure = self::$nombres[$heureAffichee];
+            $pluriel = $heureAffichee > 1 ? 's' : '';
+
+            $baseTexte = "{$texteHeure} heure{$pluriel}{$strMinute} {$suffixe}";
         }
-        if ($heure === 0) {
-            return "minuit{$strMinute}";
+
+        // 3. Ajout de la précision si nécessaire
+        $precisionTexte = '';
+        if ($ecart > 0) {
+            // On réutilise notre tableau de nombres pour avoir "une" ou "deux"
+            $motEcart = self::$nombres[$ecart];
+            $plurielEcart = $ecart > 1 ? 's' : '';
+            $precisionTexte = " à {$motEcart} minute{$plurielEcart} près";
         }
 
-        $suffixe = "du matin";
-        $heureAffichee = $heure;
-
-        if ($heure > 12) {
-            $heureAffichee = $heure - 12;
-            $suffixe = "de l'après-midi";
-        }
-
-        $texteHeure = self::$nombres[$heureAffichee];
-        $pluriel = $heureAffichee > 1 ? 's' : '';
-
-        return "{$texteHeure} heure{$pluriel}{$strMinute} {$suffixe}";
+        return $baseTexte . $precisionTexte;
     }
 }
