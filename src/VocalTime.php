@@ -12,7 +12,9 @@ class VocalTime
 
     private static array $minutesTexte = [
         5 => 'cinq', 10 => 'dix', 15 => 'et quart',
-        20 => 'vingt', 25 => 'vingt-cinq', 30 => 'et demie'
+        20 => 'vingt', 25 => 'vingt-cinq', 30 => 'et demie',
+        35 => 'moins vingt-cinq', 40 => 'moins vingt', 45 => 'moins le quart',
+        50 => 'moins dix', 55 => 'moins cinq'
     ];
 
     public static function traduire(\DateTime $time): string
@@ -20,13 +22,16 @@ class VocalTime
         $heure = (int) $time->format('G');
         $minute = (int) $time->format('i');
 
-        // Récupération du texte des minutes si elles existent
+        // Bascule sur l'heure suivante si on a dépassé la demi-heure
+        if ($minute > 30) {
+            $heure = ($heure + 1) % 24;
+        }
+
         $strMinute = '';
         if ($minute > 0 && isset(self::$minutesTexte[$minute])) {
             $strMinute = ' ' . self::$minutesTexte[$minute];
         }
 
-        // Gestion de midi et minuit
         if ($heure === 12) {
             return "midi{$strMinute}";
         }
@@ -45,7 +50,6 @@ class VocalTime
         $texteHeure = self::$nombres[$heureAffichee];
         $pluriel = $heureAffichee > 1 ? 's' : '';
 
-        // On intercale les minutes avant le suffixe
         return "{$texteHeure} heure{$pluriel}{$strMinute} {$suffixe}";
     }
 }

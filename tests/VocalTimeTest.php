@@ -33,7 +33,7 @@ class VocalTimeTest extends TestCase
 
     public function testTranchesCinqMinutesSpeciales(): void
     {
-        $this->assertEquals("neuf heures moins le quart", VocalTime::traduire(new \DateTime('08:45')));
+        $this->assertEquals("neuf heures moins le quart du matin", VocalTime::traduire(new \DateTime('08:45')));
         $this->assertEquals("une heure moins vingt-cinq de l'après-midi", VocalTime::traduire(new \DateTime('12:35')));
     }
 }
