@@ -17,4 +17,10 @@ class VocalTimeTest extends TestCase
     {
         $this->assertEquals("deux heures de l'après-midi", VocalTime::traduire(new \DateTime('14:00')));
     }
+
+    public function testHeuresSpeciales(): void
+    {
+        $this->assertEquals("midi", VocalTime::traduire(new \DateTime('12:00')));
+        $this->assertEquals("minuit", VocalTime::traduire(new \DateTime('00:00')));
+    }
 }
