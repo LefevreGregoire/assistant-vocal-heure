@@ -13,6 +13,15 @@ class VocalTime
     public static function traduire(\DateTime $time): string
     {
         $heure = (int) $time->format('G');
+        $minute = (int) $time->format('i');
+        
+        // Gestion des heures spéciales "pile"
+        if ($heure === 12 && $minute === 0) {
+            return "midi";
+        }
+        if ($heure === 0 && $minute === 0) {
+            return "minuit";
+        }
         
         $suffixe = "du matin";
         $heureAffichee = $heure;
