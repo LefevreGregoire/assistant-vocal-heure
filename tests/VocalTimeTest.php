@@ -23,4 +23,11 @@ class VocalTimeTest extends TestCase
         $this->assertEquals("midi", VocalTime::traduire(new \DateTime('12:00')));
         $this->assertEquals("minuit", VocalTime::traduire(new \DateTime('00:00')));
     }
+
+    public function testTranchesCinqMinutesNormales(): void
+    {
+        $this->assertEquals("midi dix", VocalTime::traduire(new \DateTime('12:10')));
+        $this->assertEquals("minuit et quart", VocalTime::traduire(new \DateTime('00:15')));
+        $this->assertEquals("trois heures vingt-cinq de l'après-midi", VocalTime::traduire(new \DateTime('15:25')));
+    }
 }
