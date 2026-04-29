@@ -14,17 +14,17 @@ class VocalTime
     {
         $heure = (int) $time->format('G');
         
-        // Gestion rapide (Green) de l'après-midi
+        $suffixe = "du matin";
+        $heureAffichee = $heure;
+
         if ($heure > 12) {
-            $heureTexte = self::$nombres[$heure - 12];
-            $pluriel = ($heure - 12) > 1 ? 's' : '';
-            return "{$heureTexte} heure{$pluriel} de l'après-midi";
+            $heureAffichee = $heure - 12;
+            $suffixe = "de l'après-midi";
         }
         
-        // Matin
-        $texteHeure = self::$nombres[$heure];
-        $pluriel = $heure > 1 ? 's' : '';
+        $texteHeure = self::$nombres[$heureAffichee];
+        $pluriel = $heureAffichee > 1 ? 's' : '';
         
-        return "{$texteHeure} heure{$pluriel} du matin";
+        return "{$texteHeure} heure{$pluriel} {$suffixe}";
     }
 }
