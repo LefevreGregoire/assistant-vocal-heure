@@ -36,4 +36,11 @@ class VocalTimeTest extends TestCase
         $this->assertEquals("neuf heures moins le quart du matin", VocalTime::traduire(new \DateTime('08:45')));
         $this->assertEquals("une heure moins vingt-cinq de l'après-midi", VocalTime::traduire(new \DateTime('12:35')));
     }
+
+    public function testMinutesPrecises(): void
+    {
+        $this->assertEquals("neuf heures moins dix du matin à deux minutes près", VocalTime::traduire(new \DateTime('08:48')));
+        // Le strtolower sert à ignorer la majuscule sur le 'M' de Midi mise dans l'énoncé pour simplifier
+        $this->assertEquals("midi cinq à une minute près", strtolower(VocalTime::traduire(new \DateTime('12:04')))); 
+    }
 }
